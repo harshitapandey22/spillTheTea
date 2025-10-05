@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb+srv://pharshita588_db_user:mMJFTKg3rLWFEZy9@spillthetea.cnydyjk.mongodb.net/?retryWrites=true&w=majority&appName=spillthetea")
+mongoose.connect("mongodb+srv://neerajmain704_db_user:8WY0F6Dmya1Edw7G@spillthetea.qwavc4y.mongodb.net/")
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 

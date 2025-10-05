@@ -2,7 +2,7 @@ const express = require("express");
 const { User } = require("./mongodb");
 const app = express();
 app.use(express.json());
-const PORT = 3000;
+const PORT = 3000;  //
 
 app.post("/signup", async (req, res) => {
   const { username, password, email } = req.body;
@@ -11,7 +11,6 @@ app.post("/signup", async (req, res) => {
   if (!password) return res.status(410).json({ error: "No password" });
   if (!email) return res.status(410).json({ error: "No email" });
 
-  console.log("Request body:", req.body);
 
   try {
     const existingUser = await User.findOne({ email });
