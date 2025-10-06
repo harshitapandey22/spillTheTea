@@ -31,6 +31,21 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+app.post('/signin',async(req,res)=>{
+  const email = req.body.email;
+  const password = req.body.password;
+
+  const checkingEmail =  await User.findOne({email});
+  if(!checkingEmail){
+    return res.status(401).json({msg:"user doesnt exist! sign up"});
+  }
+  if(password==checkingEmail.password){
+    return res.status(200).json({msg:checkingEmail});
+  }
+  return res.status(409).json({msg:"wrong password"});
+
+})
+
 app.listen(PORT, () => {
   console.log("server is running");
 });
