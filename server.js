@@ -1,5 +1,5 @@
 const express = require("express");
-const { User } = require("./mongodb");
+const { User, Tea } = require("./mongodb");
 const app = express();
 app.use(express.json());
 const PORT = 3000;
@@ -44,7 +44,37 @@ app.post('/signin',async(req,res)=>{
   }
   return res.status(409).json({msg:"wrong password"});
 
-})
+});
+
+app.post('/createtea',async(req,res)=>{
+  const username = req.body.username;
+  const teaCaption = req.body.teaCaption;
+  const teaDescription = req.body.teaDescription;
+  if (!username) {
+    return res.status(400).json({ msg: "no username" });
+  }
+  if (!teaCaption) {
+    return res.status(400).json({ msg: "no teacapption" });
+  }
+  if (!teaDescription) {
+    return res.status(400).json({ msg: "no teadescription" });
+  }
+  const checkingUsername =  await User.findOne({username});
+  if(!checkingUsername){
+    return res.status(404).json({msg:"pls signup "});
+  }
+
+  const newTea = await Tea.create({
+    username,
+    teaCaption,
+    teaDescription
+
+  })
+
+  return res.status(200).json({
+    msg:"teacreated ayayayayyaya"
+  });
+});
 
 app.listen(PORT, () => {
   console.log("server is running");

@@ -9,9 +9,17 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   email:    { type: String, required: true }
 });
+const teaSchema = new mongoose.Schema({
+  username:{type: String,required: true},
+  teaCaption :{type: String,required: true},
+  teaDescription:{type:String,required:true}
+
+});
+const Tea = mongoose.model("Tea",teaSchema);
 
 const User = mongoose.model("User", userSchema);
 
 module.exports = {
-  User
+  User ,
+  Tea
 };
