@@ -1,39 +1,33 @@
 const express = require("express");
-const { User } = require("./mongodb");
+const {User} = require("./mongodb");
 const app = express();
 app.use(express.json());
-const PORT = 3000;  //
+const PORT = 8080;
 
-app.post("/signup", async (req, res) => {
-  const { username, password, email } = req.body;
+app.post("/signup", async (req,res)=>{
+  const username = req.body.username;
+  const password = req.body.password;
+  const email = req.body.email;
 
-  if (!username) return res.status(410).json({ error: "No username" });
-  if (!password) return res.status(410).json({ error: "No password" });
-  if (!email) return res.status(410).json({ error: "No email" });
-
-
-  try {
-    const existingUser = await User.findOne({ email });
-
-    if (existingUser) {
-      return res.status(401).json({ msg: "Email already exists" });
-    }
-
-    const newUser = await User.create({ username, password, email });
-
-    console.log("New user created:", newUser);
-
-    return res.status(200).json({ msg: "Account created" });
-  } catch (error) {
-    console.error("Error creating user:", error);
-    return res.status(500).json({ error: "Internal server error" });
+  if(!username){
+    return res.status(410).json({msg:"no username"});
   }
-});
+  if(!password){
+    return res.status(410).json({msg:"no password"});
+  }
+  if(!email){
+    return res.status(410).json({msg:"no email"});
+  }
 
-app.get('/testing', (req,res) => {
-  res.status(200).json({msg : "working"});
+  const checkingEmail = await User.findOne({email})
+  if(checkingEmail){
+    return res.status(400).json({msg:"email already exists"});
+  }
+  const newUser = await User.create({username,password,email});
+  return res.status(200).json({msg:"account created"});
+
 })
 
-app.listen(PORT, () => {
-  console.log("Server is running");
-});
+app.listen(PORT,(req,res)=>{
+  console.log("server is running");
+})
