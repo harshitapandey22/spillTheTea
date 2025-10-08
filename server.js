@@ -1,5 +1,7 @@
 const express = require("express");
 const { User, Tea } = require("./mongodb");
+const jwt = require("jsonWebToken");
+const secretKey = "22harshita";
 const app = express();
 app.use(express.json());
 const PORT = 3000;
@@ -40,40 +42,58 @@ app.post('/signin',async(req,res)=>{
     return res.status(401).json({msg:"user doesnt exist! sign up"});
   }
   if(password==checkingEmail.password){
-    return res.status(200).json({msg:checkingEmail});
+    const userInput = {
+      email,
+      password
+    }
+    const currentToken = jwt.sign(userInput,secretKey);
+    res.status(200).json({
+      token : currentToken,
+      msg : "You are signed in!"
+    });
+   // return res.status(200).json({msg:checkingEmail});
   }
   return res.status(409).json({msg:"wrong password"});
 
 });
 
 app.post('/createtea',async(req,res)=>{
-  const username = req.body.username;
-  const teaCaption = req.body.teaCaption;
-  const teaDescription = req.body.teaDescription;
-  if (!username) {
-    return res.status(400).json({ msg: "no username" });
-  }
-  if (!teaCaption) {
-    return res.status(400).json({ msg: "no teacapption" });
-  }
-  if (!teaDescription) {
-    return res.status(400).json({ msg: "no teadescription" });
-  }
-  const checkingUsername =  await User.findOne({username});
-  if(!checkingUsername){
-    return res.status(404).json({msg:"pls signup "});
-  }
+  try{
+    const teaCaption = req.body.teaCaption;
+    const teaDescription = req.body.teaDescription;
+    const token = req.get("authorization");  // instead of header.authorization write get  //gebrish lang
+    const verifyingToken = jwt.verify(token,secretKey); 
+    if (!teaCaption) {
+      return res.status(400).json({ msg: "no teacapption" });
+    }
+    if (!teaDescription) {
+      return res.status(400).json({ msg: "no teadescription" });
+    }
+    if (!token) {
+      return res.status(400).json({ msg: "please sign in" });
+    }
 
-  const newTea = await Tea.create({
-    username,
-    teaCaption,
-    teaDescription
-
-  })
-
-  return res.status(200).json({
-    msg:"teacreated ayayayayyaya"
-  });
+    if(verifyingToken){
+      const gettingEmail = jwt.decode(token); //object part basically all the inputs
+      const  email = gettingEmail.email;
+      const newTea = await Tea.create({
+        email,
+        teaCaption,
+        teaDescription
+      })
+      return res.status(200).json({
+        msg:"teacreated ayayayayyaya"
+      });
+    } 
+    else {
+      return res.status(408).json({
+        msg:"token not verified"
+      });
+    }
+  }
+  catch{
+    return res.status(500).json({ msg: "server error" });
+  }
 });
 
 app.listen(PORT, () => {

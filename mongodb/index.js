@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb+srv://neerajmain704_db_user:8WY0F6Dmya1Edw7G@spillthetea.qwavc4y.mongodb.net/")
+mongoose.connect("mongodb+srv://neerajmain704_db_user:8WY0F6Dmya1Edw7G@spillthetea.qwavc4y.mongodb.net/")  // url ko neeraj se chupa ke rakhna h env file mein 
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
