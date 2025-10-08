@@ -61,35 +61,24 @@ app.post('/createtea',async(req,res)=>{
   try{
     const teaCaption = req.body.teaCaption;
     const teaDescription = req.body.teaDescription;
-    const token = req.get("authorization");  // instead of header.authorization write get  //gebrish lang
-    const verifyingToken = jwt.verify(token,secretKey); 
+    const username = jwt.decode(req.get("authorization").split(' ')[1]).email;  // instead of header.authorization write get  //gebrish lang
+    if (!username) {
+      return res.status(400).json({ msg: "please sign in" });
+    }
     if (!teaCaption) {
       return res.status(400).json({ msg: "no teacapption" });
     }
     if (!teaDescription) {
       return res.status(400).json({ msg: "no teadescription" });
     }
-    if (!token) {
-      return res.status(400).json({ msg: "please sign in" });
-    }
-
-    if(verifyingToken){
-      const gettingEmail = jwt.decode(token); //object part basically all the inputs
-      const  email = gettingEmail.email;
-      const newTea = await Tea.create({
-        email,
-        teaCaption,
-        teaDescription
-      })
-      return res.status(200).json({
-        msg:"teacreated ayayayayyaya"
-      });
-    } 
-    else {
-      return res.status(408).json({
-        msg:"token not verified"
-      });
-    }
+    const newTea = await Tea.create({
+      username,
+      teaCaption,
+      teaDescription
+    });
+    return res.status(200).json({
+      msg:"teacreated ayayayayyaya"
+    });
   }
   catch{
     return res.status(500).json({ msg: "server error" });
